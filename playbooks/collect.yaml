@@ -1,0 +1,21 @@
+---
+
+  - name: "Задача-сборщик информации с других машин"
+    hosts: all
+    tasks:
+      - name: "Перенос файл-скрипта на удаленные машины"
+        copy:
+          src: ../scripts/get_versions.sh
+          dest: /home/developer/project/get_versions.sh
+          mode: "0755"
+
+      - name: "Запуск скрипта"
+        shell:
+          cmd: /home/developer/project/get_versions.sh
+        register: script_output
+
+      - name: "Создание и сохранение файла с версиями пакетов"
+        delegate_to: localhost
+        copy:
+          content: "{{ script_output.stdout }}"
+          dest: "../data/incoming/{{ inventory_hostname }}.json"

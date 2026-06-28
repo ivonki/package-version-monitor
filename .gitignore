@@ -1,0 +1,11 @@
+compare/venv
+__pycache__/
+*.puc
+
+data/incoming/*
+data/current/*
+data/history/*
+
+!data/incoming/.gitkeep
+!data/current/.gitkeep
+!data/history/.gitkeep

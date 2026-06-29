@@ -65,7 +65,7 @@ cat <<EOF
   "hostname": "$HOSTNAME",
   "packages": {
   "php": "$PHP_VERSION",
-  "php-fpv": "$PHPFPM_VERSISON",
+  "php-fpm": "$PHPFPM_VERSISON",
   "apache": "$APACHE_VERSION",
   "nginx": "$NGINX_VERSION",
   "openssl": "$OPENSSL_VERSION",

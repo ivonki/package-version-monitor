@@ -1,67 +1,132 @@
-# Сбор версий пакетов удаленных машин с использованием Ansible
+# Package Version Monitor
 
-## Проект собирает версии пакетов с удаленных Linux хостов с использованием Ansible, сравнивает их с предыдущими версиями и логирует изменения.
+Система для сбора и отслеживания версий пакетов на удалённых Linux-хостах с использованием Ansible.
 
-### Требования:
-* Ansible
-* Python 3.7+
-* SSH доступ с главного узла на управляемые машины
+Проект автоматически фиксирует изменения версий и сохраняет историю обновлений.
 
-### Архитектура
+---
+
+## Архитектура
 
 ```text
 package-version-monitor/
 ├── compare/
+│   └── compare.py
 ├── data/
 │   ├── current/
 │   ├── history/
 │   └── incoming/
 ├── inventory/
-├── logs/
+│   └── hosts.ini
 ├── playbooks/
 ├── scripts/
+├── logs/
 ├── run.sh
+├── install.sh
 └── README.md
 ```
 
-1. Инициализация скрипта ./run.sh запускает два файла: playbooks/collect.yaml и compare/compare.py
+---
 
-2. Файл playbooks/collect.yaml запускает файл scripts/get_versions.sh, который собирает версии указанных пакетов, корректирует вывод 
+## Принцип работы
 
-3. Хост с Ansible получает версии пакетов в формате json. Запускается скрипт compare/compare.py
+1. `install.sh` подготавливает окружение и зависимости
+2. `run.sh` запускает процесс сбора и сравнения
+3. Ansible выполняет `scripts/get_versions.sh` на удалённых хостах
+4. Результат сохраняется в `data/incoming/`
+5. `compare/compare.py`:
+   - сравнивает `incoming/` и `current/`
+   - обновляет `current/`
+   - пишет изменения в `history/`
+---
 
-4. Скрипт сравнивает версию пакета в current/{hostname}.json и в incoming/{hostname}.json. Если их нет, то файл в incoming удаляется, если измненения есть, то файл из incoming перезаписывает файл в current и удаляется. Изменение версии также отражается в логах сервера в каталоге history
+## Установка
 
-## Запуск проекта
-
-Склонируйте репозиторий и перейдите в директорию:
-
-```
+```bash
 git clone https://github.com/ivonki/package-version-monitor
 cd package-version-monitor
+
+bash install.sh
 ```
 
-Создайте окружение для Python
+`install.sh` выполняет:
+- проверку зависимостей (python3, ansible)
+- подготовку окружения выполнения
+- установку прав на скрипты
+
+---
+
+## Настройка inventory
+
+Файл:
+
 ```
-python3 -m venv compare/venv
-source compare/venv/bin/activate
-pip install -r compare/requirements.txt
+inventory/hosts.ini
 ```
 
-Заполните файл инвентаря inventory/hosts.ini в соответствии с вашими машинами, например:
-```
+Пример:
+
+```ini
 [all]
-server1 ansible_host=10.10.10.10 ansible_host=developer
+server1 ansible_host=10.10.10.10 ansible_user=developer
+server2 ansible_host=10.10.10.11 ansible_user=developer
 ```
 
-Запуск скрипта (требуются права на исполнение)
-```
-chmod +x run.sh
+---
+
+## Запуск
+
+### Ручной запуск
+
+```bash
 ./run.sh
 ```
-Добавьте cron-задачу
+
+## Формат данных
+
+### data/incoming / data/current
+
+```json
+{
+  "hostname": "server1",
+  "packages": {
+    "php": "8.1.0",
+    "nginx": "1.22.0",
+    "python": "3.10.6"
+  }
+}
 ```
-export EDITOR=nano
-crontab -e
-*/10 * * * * cd *абсолютный путь к директории проекта* && ./run.sh >> *путь к директории проекта*/logs/cron.log 2>&1
+
+---
+
+### data/history
+
+```text
+[2026-01-23 02:00:01]
+nginx: 1.18.0 -> 1.22.0
+php: 7.4.0 -> 8.1.0
+```
+
+---
+
+## Требования
+
+### Управляющая машина (WSL)
+- Python 3
+- Ansible
+- SSH доступ к хостам
+
+### Удалённые машины
+- bash
+- стандартные системные утилиты (nginx, php, python и т.д.)
+- Python не требуется
+
+---
+
+## Особенности
+
+- agentless архитектура (без установки ПО на удалённые хосты)
+- сбор через Ansible + SSH
+- автоматическое сравнение версий
+- хранение истории изменений
 ```

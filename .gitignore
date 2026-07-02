@@ -9,3 +9,5 @@ data/history/*
 !data/incoming/.gitkeep
 !data/current/.gitkeep
 !data/history/.gitkeep
+
+logs/cron.log

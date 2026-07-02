@@ -32,6 +32,12 @@ else
 fi
 
 
+if command_exists httpd; then
+	HTTPD_VERSION=$(httpd -v | awk -F'/' '{print $2}' | awk '{print $1}')
+else
+	HTTPD_VERSION="not found"
+fi
+
 if command_exists nginx; then
 	NGINX_VERSION=$(nginx -v 2>&1 | awk -F'/' '{print $2}')
 else
@@ -67,6 +73,7 @@ cat <<EOF
   "php": "$PHP_VERSION",
   "php-fpm": "$PHPFPM_VERSION",
   "apache": "$APACHE_VERSION",
+  "httpd": "$HTTPD_VERSION",
   "nginx": "$NGINX_VERSION",
   "openssl": "$OPENSSL_VERSION",
   "python": "$PYTHON_VERSION",

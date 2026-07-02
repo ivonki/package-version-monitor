@@ -12,4 +12,4 @@
         delegate_to: localhost
         copy:
           content: "{{ script_output.stdout }}"
-          dest: "../data/incoming/{{ inventory_hostname }}.json"
+          dest: "../data/incoming/{{ ansible_host }}.json"

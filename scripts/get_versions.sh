@@ -17,9 +17,9 @@ else
 fi
 
 if command_exists php-fpm; then
-	PHPFPM_VERSISON=$(php-fpm --version  | head -n1 | cut -d' ' -f2 | cut -d'-' -f1)
+	PHPFPM_VERSION=$(php-fpm --version  | head -n1 | cut -d' ' -f2 | cut -d'-' -f1)
 elif command_exists php-fpm7.0; then
-	PHPFPM_VERSISON=$(php-fpm7.0 --version  | head -n1 | cut -d' ' -f2 | cut -d'-' -f1)
+	PHPFPM_VERSION=$(php-fpm7.0 --version  | head -n1 | cut -d' ' -f2 | cut -d'-' -f1)
 else
 	PHPFPM_VERSION="not found"
 fi

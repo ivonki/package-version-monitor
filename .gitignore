@@ -11,3 +11,4 @@ data/history/*
 !data/history/.gitkeep
 
 logs/cron.log
+inventory/hosts.ini

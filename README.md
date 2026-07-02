@@ -50,9 +50,8 @@ pip install -r compare/requirements.txt
 
 Заполните файл инвентаря inventory/hosts.ini в соответствии с вашими машинами, например:
 ```
-[servers]
-server1 ansible_host=...
-server2 ansible_host=...
+[all]
+server1 ansible_host=10.10.10.10 ansible_host=developer
 ```
 
 Запуск скрипта (требуются права на исполнение)

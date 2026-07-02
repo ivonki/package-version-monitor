@@ -15,7 +15,7 @@ for file in INCOMING.iterdir():
         continue
 
     incoming = load(file)
-    host = incoming["hostname"]
+    host = file.stem
 
     current_file = CURRENT / f"{host}.json"
     history_file = HISTORY / f"{host}.log"
